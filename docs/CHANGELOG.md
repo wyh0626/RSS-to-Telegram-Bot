@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## v2.9.0: Telegraph-related revert, skip cert verification, and more
+
+### BREAKING CHANGES
+
+Media (image and video) are no longer uploaded when generating Telegraph posts due to [Telegraph disabling media upload](https://t.me/durov/343). (first introduced in v2.6.0)
 
 ### Addition
 
@@ -9,6 +13,7 @@
 ### Enhancements
 
 - **Sanitize post title and author**: The title and author of a post (RSS item or Atom entry) are now sanitized to prevent unexpected formatting issues. In particular, unexpected whitespaces and linebreaks are removed, and any HTML elements are stripped. This helps display them correctly in Telegram messages as well as Telegraph posts.
+- **Improve robustness on Railway.app**: Some Railway-specific environment variables are recognized to improve robustness on Railway.app. In particular, `DATABASE_PRIVATE_URL` and `DATABASE_PUBLIC_URL` will be used when `DATABASE_URL` is unavailable or invalid. This should solve most database connection issues on Railway.app.
 - **Minor refactor**: Some internal functions have been refactored to improve readability and maintainability.
 
 ### Bug fixes
