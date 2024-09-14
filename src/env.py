@@ -231,6 +231,7 @@ API_ID: Final = int(os.environ['API_ID']) if os.environ.get('API_ID') else None
 API_HASH: Final = os.environ.get('API_HASH')
 TOKEN: Final = os.environ.get('TOKEN')
 
+
 try:
     _manager = tuple(map(int, __list_parser(os.environ.get('MANAGER') or os.environ.get('CHATID'))))
     MANAGER: Final = set(_manager)  # optimize membership test
@@ -386,3 +387,14 @@ if not NO_UVLOOP:
         uvloop = None
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
+
+OPENAI_API_KEY: Final = os.environ.get('OPENAI_API_KEY')
+OPENAI_API_BASE: Final = os.environ.get('OPENAI_API_BASE', 'https://api.openai.com/v1')
+
+if not OPENAI_API_KEY:
+    logger.warning('未设置OPENAI_API_KEY环境变量，OpenAI相关功能将无法使用。')
+
+# 添加新的环境变量
+AI_SUMMARY_ENABLED: Final = __bool_parser(os.environ.get('AI_SUMMARY_ENABLED', 'false'))
+AI_SUMMARY_MODEL: Final = os.environ.get('AI_SUMMARY_MODEL', 'gpt-3.5-turbo')
+AI_SUMMARY_PROMPT: Final = os.environ.get('AI_SUMMARY_PROMPT', '你是世界上最专业的文章总结工具，擅长英文和中文互译。你是一位精通英文和中文的专业翻译，尤其擅长将IT公司黑话和专业词汇翻译成简洁易懂的地道表达。你的任务是将以下内容总结成地道的中文，风格与科普杂志或日常对话相似。')

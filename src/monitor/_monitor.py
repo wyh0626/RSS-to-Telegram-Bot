@@ -34,6 +34,8 @@ from ..helpers.bg import bg
 from ..helpers.singleton import Singleton
 from ..helpers.timeout import BatchTimeout
 from ..parsing.utils import ensure_plain
+from ..openai_helper import summarize_content  # 假设我们在新文件中实现了这个函数
+from src.env import OPENAI_API_KEY, OPENAI_API_BASE, AI_SUMMARY_ENABLED, AI_SUMMARY_MODEL, AI_SUMMARY_PROMPT
 
 
 class TaskState(enum.IntFlag):
@@ -329,6 +331,16 @@ class Monitor(Singleton):
                 return
 
             logger.debug(f'Updated: {feed.link}')
+            
+            if AI_SUMMARY_ENABLED:
+                # 只为每个更新的条目的 description 生成摘要
+                for entry in updated_entries:
+                    if 'description' in entry:
+                        original_description = entry['description']
+                        ai_summary = await summarize_content(original_description)
+                        # 将原始描述和AI摘要组合在一起
+                        entry['description'] = f"{ai_summary}"
+
             feed.last_modified = wr.last_modified
             feed.entry_hashes = list(islice(new_hashes, max(len(rss_d.entries) * 2, 100))) or None
             feed_updated_fields.update({'last_modified', 'entry_hashes'})
